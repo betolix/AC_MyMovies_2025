@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">ArchitectCoders</string>
+    <string name="back">Back</string>
 </resources>

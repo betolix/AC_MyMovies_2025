@@ -50,6 +50,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import io.h3llo.architectcoders.ui.screens.home.HomeScreen
 import io.h3llo.architectcoders.ui.theme.ArchitectCodersTheme
 
 class MainActivity : ComponentActivity() {
@@ -58,78 +59,13 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            ArchitectCodersTheme {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+            HomeScreen()
 
-                    Scaffold (
-                        topBar = {
-                            TopAppBar(
-                                title = { Text(text = "Movies") }
-                            )
-                        },
-                        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
-                    ){padding ->
-                        LazyVerticalGrid(
-                            columns = GridCells.Adaptive(120.dp),
-                            horizontalArrangement = Arrangement.spacedBy(4.dp),
-                            verticalArrangement = Arrangement.spacedBy(4.dp),
-                            modifier = Modifier.padding(horizontal = 4.dp),
-                            contentPadding = padding
-
-                        ) {
-                            items(movies) { movie ->
-                                MovieItem(movie = movie)
-                            }
-                        }
-                    }
-
-
-                    /*
-                    LazyColumn {
-                        item{
-                            Box (
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height (180.dp)
-                                    .background (Color. Gray)
-                            )
-                        }
-                        items(100) { index ->
-                            Text("Item $index", modifier = Modifier.padding(16.dp))
-                        }
-                    }
-                    */
-                }
-            }
         }
     }
 }
 
-@Composable
-fun MovieItem(movie: Movie) {
 
-    Column {
-        AsyncImage(
-            model = movie.poster,
-            contentDescription = movie.title,
-            modifier = Modifier
-                .fillMaxWidth()
-                .aspectRatio(2 / 3F)
-                .clip(MaterialTheme.shapes.small)
-        )
-        Text(
-            text = movie.title,
-            style = MaterialTheme.typography.bodySmall,
-            maxLines = 1,
-            modifier = Modifier.padding(8.dp)
-        )
-    }
-
-}
 
 
 
