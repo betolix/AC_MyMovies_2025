@@ -26,6 +26,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -34,6 +35,8 @@ import androidx.compose.material3.Shapes
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -43,12 +46,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import io.h3llo.architectcoders.ui.theme.ArchitectCodersTheme
 
 class MainActivity : ComponentActivity() {
+    @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -58,12 +63,30 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
+                    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
-                    LazyVerticalGrid(columns = GridCells.Adaptive(120.dp)) {
-                        items(movies) { movie ->
-                            MovieItem(movie = movie)
+                    Scaffold (
+                        topBar = {
+                            TopAppBar(
+                                title = { Text(text = "Movies") }
+                            )
+                        },
+                        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
+                    ){padding ->
+                        LazyVerticalGrid(
+                            columns = GridCells.Adaptive(120.dp),
+                            horizontalArrangement = Arrangement.spacedBy(4.dp),
+                            verticalArrangement = Arrangement.spacedBy(4.dp),
+                            modifier = Modifier.padding(horizontal = 4.dp),
+                            contentPadding = padding
+
+                        ) {
+                            items(movies) { movie ->
+                                MovieItem(movie = movie)
+                            }
                         }
                     }
+
 
                     /*
                     LazyColumn {
@@ -102,7 +125,7 @@ fun MovieItem(movie: Movie) {
             text = movie.title,
             style = MaterialTheme.typography.bodySmall,
             maxLines = 1,
-            modifier = Modifier.padding (8.dp)
+            modifier = Modifier.padding(8.dp)
         )
     }
 
