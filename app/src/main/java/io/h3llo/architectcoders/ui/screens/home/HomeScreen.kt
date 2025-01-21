@@ -1,5 +1,6 @@
 package io.h3llo.architectcoders.ui.screens.home
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
@@ -41,7 +42,7 @@ fun Screen(content: @Composable () -> Unit) {
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    fun HomeScreen() {
+    fun HomeScreen(onClick: (Movie) -> Unit) {
 
         Screen {
             val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
@@ -64,7 +65,7 @@ fun Screen(content: @Composable () -> Unit) {
 
                 ) {
                     items(movies) { movie ->
-                        MovieItem(movie = movie)
+                        MovieItem(movie = movie, onClick = { onClick(movie) } )
                     }
                 }
             }
@@ -91,9 +92,11 @@ fun Screen(content: @Composable () -> Unit) {
 
 
 @Composable
-fun MovieItem(movie: Movie) {
+fun MovieItem(movie: Movie, onClick : () -> Unit ) {
 
-    Column {
+    Column(
+        modifier = Modifier.clickable ( onClick = onClick )
+    ) {
         AsyncImage(
             model = movie.poster,
             contentDescription = movie.title,

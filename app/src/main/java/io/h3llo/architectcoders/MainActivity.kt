@@ -49,7 +49,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import coil.compose.AsyncImage
+import io.h3llo.architectcoders.ui.screens.Navigation
+import io.h3llo.architectcoders.ui.screens.detail.DetailScreen
 import io.h3llo.architectcoders.ui.screens.home.HomeScreen
 import io.h3llo.architectcoders.ui.theme.ArchitectCodersTheme
 
@@ -59,8 +66,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            HomeScreen()
-
+            //HomeScreen()
+            Navigation()
         }
     }
 }
