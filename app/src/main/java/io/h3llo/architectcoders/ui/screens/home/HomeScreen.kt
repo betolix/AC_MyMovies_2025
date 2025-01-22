@@ -3,6 +3,7 @@ package io.h3llo.architectcoders.ui.screens.home
 import android.Manifest
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.aspectRatio
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -26,16 +28,17 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
-import io.h3llo.architectcoders.Movie
+import io.h3llo.architectcoders.data.Movie
 import io.h3llo.architectcoders.R
-import io.h3llo.architectcoders.movies
 import io.h3llo.architectcoders.ui.common.PermissionRequestEffect
 import io.h3llo.architectcoders.ui.common.getRegion
 import io.h3llo.architectcoders.ui.theme.ArchitectCodersTheme
@@ -52,78 +55,92 @@ fun Screen(content: @Composable () -> Unit) {
     }
 }
 
-    @OptIn(ExperimentalMaterial3Api::class)
-    @Composable
-    fun HomeScreen(onClick: (Movie) -> Unit) {
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun HomeScreen(
+    onClick: (Movie) -> Unit,
+    vm: HomeViewModel = viewModel()
+) {
+    val appName = stringResource(id = R.string.app_name)
+    var appBarTitle by remember { mutableStateOf(appName) }
+    val ctx = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
 
-        val ctx = LocalContext.current
-        val appName = stringResource(id = R.string.app_name)
-        var appBarTitle by remember { mutableStateOf(appName) }
-        val coroutineScope = rememberCoroutineScope()
 
-        PermissionRequestEffect(permission = Manifest.permission.ACCESS_COARSE_LOCATION) { granted ->
-            if (granted) {
-                coroutineScope.launch {
-                    val region = ctx.getRegion()
-                    appBarTitle = "$appBarTitle ($region)"
-                }
-            } else {
-                appBarTitle = "$appBarTitle (Permission denied)"
+    PermissionRequestEffect(permission = Manifest.permission.ACCESS_COARSE_LOCATION) { granted ->
+        if (granted) {
+            coroutineScope.launch {
+                val region = ctx.getRegion()
+                appBarTitle = "$appBarTitle ($region)"
             }
+        } else {
+            appBarTitle = "$appBarTitle (Permission denied)"
         }
-
-        Screen {
-            val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
-
-            Scaffold(
-                topBar = {
-                    TopAppBar(
-                        title = { Text(text = appBarTitle) }
-                    )
-                },
-                modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-                contentWindowInsets = WindowInsets.safeDrawing
-            ) { padding ->
-                LazyVerticalGrid(
-                    columns = GridCells.Adaptive(120.dp),
-                    horizontalArrangement = Arrangement.spacedBy(4.dp),
-                    verticalArrangement = Arrangement.spacedBy(4.dp),
-                    modifier = Modifier.padding(horizontal = 4.dp),
-                    contentPadding = padding
-
-                ) {
-                    items(movies) { movie ->
-                        MovieItem(movie = movie, onClick = { onClick(movie) } )
-                    }
-                }
-            }
-
-
-            /*
-            LazyColumn {
-                item{
-                    Box (
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height (180.dp)
-                            .background (Color. Gray)
-                    )
-                }
-                items(100) { index ->
-                    Text("Item $index", modifier = Modifier.padding(16.dp))
-                }
-            }
-            */
-        }
+        vm.onUiReady()
     }
 
+    Screen {
+        val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+
+        Scaffold(
+            topBar = {
+                TopAppBar(
+                    title = { Text(text = appBarTitle) }
+                )
+            },
+            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+            contentWindowInsets = WindowInsets.safeDrawing
+        ) { padding ->
+            val state = vm.state
+
+            if (state.loading) {
+                Box(
+                    modifier = Modifier.fillMaxSize().padding(padding),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
+                }
+            }
+
+            LazyVerticalGrid(
+                columns = GridCells.Adaptive(120.dp),
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                verticalArrangement = Arrangement.spacedBy(4.dp),
+                modifier = Modifier.padding(horizontal = 4.dp),
+                contentPadding = padding
+
+            ) {
+                items(state.movies, key = { it.id }) { movie ->
+                    MovieItem(movie = movie, onClick = { onClick(movie) })
+                }
+            }
+        }
+
+
+        /*
+        LazyColumn {
+            item{
+                Box (
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height (180.dp)
+                        .background (Color. Gray)
+                )
+            }
+            items(100) { index ->
+                Text("Item $index", modifier = Modifier.padding(16.dp))
+            }
+        }
+        */
+    }
+}
 
 
 @Composable
-fun MovieItem(movie: Movie, onClick : () -> Unit ) {
+fun MovieItem(movie: Movie, onClick: () -> Unit) {
 
     Column(
-        modifier = Modifier.clickable ( onClick = onClick )
+        modifier = Modifier.clickable(onClick = onClick)
     ) {
         AsyncImage(
             model = movie.poster,
@@ -142,3 +159,4 @@ fun MovieItem(movie: Movie, onClick : () -> Unit ) {
     }
 
 }
+

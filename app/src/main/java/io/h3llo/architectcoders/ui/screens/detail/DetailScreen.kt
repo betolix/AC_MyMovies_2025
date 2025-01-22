@@ -1,6 +1,5 @@
 package io.h3llo.architectcoders.ui.screens.detail
 
-import androidx.compose.foundation.content.MediaType.Companion.Text
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -22,9 +21,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import io.h3llo.architectcoders.Movie
+import io.h3llo.architectcoders.data.Movie
 import io.h3llo.architectcoders.R
-import io.h3llo.architectcoders.movies
 import io.h3llo.architectcoders.ui.screens.home.Screen
 
 @OptIn(ExperimentalMaterial3Api::class)
