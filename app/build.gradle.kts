@@ -67,6 +67,9 @@ dependencies {
     // LOCATION
     implementation(libs.play.services.location)
 
+    // RETROFIT
+    implementation (libs.retrofit)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
