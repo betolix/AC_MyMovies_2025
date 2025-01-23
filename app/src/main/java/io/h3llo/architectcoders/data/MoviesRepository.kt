@@ -6,9 +6,19 @@ import kotlinx.coroutines.withContext
 
 class MoviesRepository {
 
-    suspend fun fetchPopularMovies() : List<Movie> = withContext( Dispatchers.IO ){
-        delay(2000)
-        movies
-    }
+    suspend fun fetchPopularMovies(): List<Movie> =
+        MoviesClient
+            .instance
+            .fetchPopularMovies("US")
+            .results
+            .map { it.toDomainModel() }
 
 }
+
+
+private fun RemoteMovie.toDomainModel(): Movie =
+    Movie(
+        id = id,
+        title = title,
+        poster = "https://image.tmdb.org/t/p/w185/$posterPath",
+    )
