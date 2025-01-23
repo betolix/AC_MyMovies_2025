@@ -9,6 +9,12 @@ class MoviesRepository {
             .results
             .map { it.toDomainModel() }
 
+    suspend fun fetchMovieById(id: Int): Movie =
+        MoviesClient
+            .instance
+            .fetchMovieById(id)
+            .toDomainModel()
+
 }
 
 
