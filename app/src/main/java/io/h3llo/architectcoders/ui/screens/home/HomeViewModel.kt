@@ -5,11 +5,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import io.h3llo.architectcoders.BuildConfig
 import io.h3llo.architectcoders.data.Movie
 import io.h3llo.architectcoders.data.MoviesRepository
-import io.h3llo.architectcoders.data.movies
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class HomeViewModel : ViewModel() {
@@ -19,10 +16,10 @@ class HomeViewModel : ViewModel() {
 
     private val repository = MoviesRepository()
 
-    fun onUiReady(){
+    fun onUiReady(region: String) {
         viewModelScope.launch {
             state = UiState(loading = true)
-            state = UiState(loading = false, movies = repository.fetchPopularMovies())
+            state = UiState(loading = false, movies = repository.fetchPopularMovies(region))
         }
 
     }
