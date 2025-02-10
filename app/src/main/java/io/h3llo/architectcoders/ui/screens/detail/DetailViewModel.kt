@@ -8,19 +8,23 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import io.h3llo.architectcoders.data.Movie
 import io.h3llo.architectcoders.data.MoviesRepository
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class DetailViewModel(private val id: Int): ViewModel() {
 
     private val repository : MoviesRepository = MoviesRepository()
 
-    var state by mutableStateOf(UiState())
-        private set
+    // var state by mutableStateOf(UiState())
+    //    private set
+    private val _state = MutableStateFlow(UiState())
+    val state = _state.asStateFlow()
 
     init{
         viewModelScope.launch {
-            state = UiState(loading = true)
-            state = UiState(loading = false, movie = repository.fetchMovieById(id))
+            _state.value = UiState(loading = true)
+            _state.value = UiState(loading = false, movie = repository.fetchMovieById(id))
         }
     }
 
