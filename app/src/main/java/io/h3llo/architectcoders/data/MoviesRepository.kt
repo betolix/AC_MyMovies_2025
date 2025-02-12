@@ -18,9 +18,28 @@ class MoviesRepository {
 }
 
 
-private fun RemoteMovie.toDomainModel(): Movie =
-    Movie(
-        id = id,
-        title = title,
-        poster = "https://image.tmdb.org/t/p/w185/$posterPath",
-    )
+private fun RemoteMovie.toDomainModel() = Movie(
+    id,
+    title,
+    overview,
+    releaseDate,
+    "https://image.tmdb.org/t/p/w185/$posterPath",
+    backdropPath?.let { "https://image.tmdb.org/t/p/w780/$it" },
+    originalTitle,
+    originalLanguage,
+    popularity,
+    voteAverage
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
