@@ -19,13 +19,17 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -39,6 +43,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.repeatOnLifecycle
 import coil.compose.AsyncImage
 import io.h3llo.architectcoders.R
 import io.h3llo.architectcoders.ui.screens.home.Screen
@@ -49,6 +56,22 @@ fun DetailScreen(vm: DetailViewModel, onBack: () -> Unit) {
     //val movie = movies[0]
     val state by vm.state.collectAsState()
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+
+    val lifecycle = LocalLifecycleOwner.current.lifecycle
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(vm, lifecycle) {
+        lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            vm.events.collect { event ->
+                when (event) {
+                    is DetailViewModel.UiEvent.ShowMessage -> {
+                        snackbarHostState.currentSnackbarData?.dismiss()
+                        snackbarHostState.showSnackbar(event.message)
+                    }
+                }
+            }
+        }
+    }
 
     Screen {
         Scaffold(
@@ -67,6 +90,7 @@ fun DetailScreen(vm: DetailViewModel, onBack: () -> Unit) {
                     )
                 }
             },
+            snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
         ) { padding ->
             Column(
