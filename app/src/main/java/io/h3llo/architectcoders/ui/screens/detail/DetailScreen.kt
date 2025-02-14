@@ -55,16 +55,10 @@ import io.h3llo.architectcoders.ui.screens.home.Screen
 fun DetailScreen(vm: DetailViewModel, onBack: () -> Unit) {
     //val movie = movies[0]
     val state by vm.state.collectAsState()
-    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
-    val snackbarHostState = remember { SnackbarHostState() }
+    val detailState = rememberDetailState()
 
-    LaunchedEffect(state.message) {
-        state.message?.let {
-            snackbarHostState.currentSnackbarData?.dismiss()
-            snackbarHostState.showSnackbar(it)
-            vm.onMessageShown()
-        }
-
+    detailState.ShowMessageEffect( message = state.message ){
+        vm.onMessageShown()
     }
 
     Screen {
@@ -72,7 +66,7 @@ fun DetailScreen(vm: DetailViewModel, onBack: () -> Unit) {
             topBar = {
                 DetailTopBar(
                     title = state.movie?.title ?: "",
-                    scrollBehavior = scrollBehavior,
+                    scrollBehavior = detailState.scrollBehavior,
                     onBack = onBack
                 )
             },
@@ -84,13 +78,11 @@ fun DetailScreen(vm: DetailViewModel, onBack: () -> Unit) {
                     )
                 }
             },
-            snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
-            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection)
+            snackbarHost = { SnackbarHost(hostState = detailState.snackbarHostState) },
+            modifier = Modifier.nestedScroll( detailState.scrollBehavior.nestedScrollConnection)
         ) { padding ->
             Column(
-                modifier = Modifier
-                    .padding(padding)
-                    .verticalScroll(rememberScrollState())
+                modifier = Modifier.padding(padding).verticalScroll(rememberScrollState())
             ) {
                 if (state.loading) {
                     Box(
