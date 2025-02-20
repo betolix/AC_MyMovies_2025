@@ -15,9 +15,10 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class DetailViewModel(private val id: Int): ViewModel() {
-
-    private val repository : MoviesRepository = MoviesRepository()
+class DetailViewModel(
+    private val repository: MoviesRepository,
+    private val id: Int
+) : ViewModel() {
 
     // var state by mutableStateOf(UiState())
     //    private set

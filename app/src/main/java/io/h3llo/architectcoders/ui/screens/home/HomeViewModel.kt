@@ -11,19 +11,20 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class HomeViewModel : ViewModel() {
+class HomeViewModel(
+    private val repository: MoviesRepository
+) : ViewModel() {
 
     // var state by mutableStateOf(UiState())
     //    private set
     private val _state = MutableStateFlow(UiState())
     val state get() = _state.asStateFlow()
 
-    private val repository = MoviesRepository()
-
-    fun onUiReady(region: String) {
+    fun onUiReady() {
         viewModelScope.launch {
             _state.value = UiState(loading = true)
-            _state.value = UiState(loading = false, movies = repository.fetchPopularMovies(region))
+            _state.value = UiState(loading = false, movies = repository.fetchPopularMovies())
+
         }
 
     }

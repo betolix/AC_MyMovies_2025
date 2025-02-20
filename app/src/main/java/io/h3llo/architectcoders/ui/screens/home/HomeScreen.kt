@@ -21,26 +21,20 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
-import io.h3llo.architectcoders.data.Movie
 import io.h3llo.architectcoders.R
+import io.h3llo.architectcoders.data.Movie
 import io.h3llo.architectcoders.ui.common.PermissionRequestEffect
-import io.h3llo.architectcoders.ui.common.getRegion
 import io.h3llo.architectcoders.ui.theme.ArchitectCodersTheme
-import kotlinx.coroutines.launch
 
 @Composable
 fun Screen(content: @Composable () -> Unit) {
@@ -56,11 +50,14 @@ fun Screen(content: @Composable () -> Unit) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
-    onClick: (Movie) -> Unit,
-    vm: HomeViewModel = viewModel()
+    vm: HomeViewModel,
+    onMovieClick: (Movie) -> Unit
 ) {
     val homeState = rememberHomeState()
-    homeState.AskRegionEffect { vm.onUiReady(it) }
+
+    PermissionRequestEffect(permission = Manifest.permission.ACCESS_COARSE_LOCATION) {
+        vm.onUiReady()
+    }
 
     Screen {
 
@@ -96,7 +93,7 @@ fun HomeScreen(
 
             ) {
                 items(state.movies, key = { it.id }) { movie ->
-                    MovieItem(movie = movie, onClick = { onClick(movie) })
+                    MovieItem(movie = movie, onClick = { onMovieClick(movie) })
                 }
             }
         }

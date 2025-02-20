@@ -1,5 +1,5 @@
 package io.h3llo.architectcoders.ui.common
-
+/*
 import android.annotation.SuppressLint
 import android.content.Context
 import android.location.Address
@@ -52,3 +52,5 @@ suspend fun Geocoder.getFromLocationCompat(
         getFromLocation(latitude, longitude, maxResults) ?: emptyList()
     }
 }
+
+ */

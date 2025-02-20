@@ -1,11 +1,12 @@
 package io.h3llo.architectcoders.data
 
-class MoviesRepository {
-
-    suspend fun fetchPopularMovies(region: String): List<Movie> =
+class MoviesRepository(
+    private val regionRepository: RegionRepository
+) {
+    suspend fun fetchPopularMovies(): List<Movie> =
         MoviesClient
             .instance
-            .fetchPopularMovies("US")
+            .fetchPopularMovies(regionRepository.findLastRegion())
             .results
             .map { it.toDomainModel() }
 
